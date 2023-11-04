@@ -7,11 +7,8 @@ use App\Models\Student;
 
 class StudentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
-    {
+	{
         # menggunakan model Student untuk select data
 		$students = Student::all();
 
@@ -25,29 +22,19 @@ class StudentController extends Controller
 			$response = [
 				'message' => 'Data tidak ada'
 			];
-			return response()->json($response, 200);
+			return response()->json($response, 404);
 		}
-    }
+	}
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+	public function store(Request $request)
+	{
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        $input = [
-			'nama' => $request->nama,
-			'nim' => $request->nim,
-			'email' => $request->email,
-			'jurusan' => $request->jurusan
-		];
+		// $input = [
+		// 	'nama' => $request->nama,
+		// 	'nim' => $request->nim,
+		// 	'email' => $request->email,
+		// 	'jurusan' => $request->jurusan
+		// ];
 
 		$student = Student::create($request->all());
 
@@ -59,36 +46,63 @@ class StudentController extends Controller
 		return response()->json($response, 201);
 	}
 
+	public function show($id)
+	{
+		$student = Student::find($id);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+		if ($student) {
+			$response = [
+				'message' => 'Get detail student',
+				'data' => $student
+			];
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
+			return response()->json($response, 200);
+		} else {
+			$response = [
+				'message' => 'Data not found'
+			];
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+			return response()->json($response, 404);
+		}
+	}
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
+	public function update(Request $request, $id)
+	{
+		$student = Student::find($id);
+
+		if ($student) {
+			$response = [
+				'message' => 'Student is updated',
+				'data' => $student->update($request->all())
+			];
+
+			return response()->json($response, 200);
+		} else {
+			$response = [
+				'message' => 'Data not found'
+			];
+
+			return response()->json($response, 404);
+		}
+	}
+
+	public function destroy($id)
+	{
+		$student = Student::find($id);
+
+		if ($student) {
+			$response = [
+				'message' => 'Student is delete',
+				'data' => $student->delete()
+			];
+
+			return response()->json($response, 200);
+		} else {
+			$response = [
+				'message' => 'Data not found'
+			];
+
+			return response()->json($response, 404);
+		}
+	}
 }
