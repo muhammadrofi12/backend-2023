@@ -7,6 +7,7 @@ use App\Models\Student;
 
 class StudentController extends Controller
 {
+    // Menampilkan semua data student
     public function index()
 	{
         # menggunakan model Student untuk select data
@@ -26,33 +27,36 @@ class StudentController extends Controller
 		}
 	}
 
+    // Menyimpan data student baru
 	public function store(Request $request)
-	{
+    {
+        #validate
+        $validateData = $request->validate([
+            'nama' => 'required',
+            'nim' => 'numeric|required',
+            'email' => 'email|required',
+            'jurusan' => 'required'
+        ]);
 
-		// $input = [
-		// 	'nama' => $request->nama,
-		// 	'nim' => $request->nim,
-		// 	'email' => $request->email,
-		// 	'jurusan' => $request->jurusan
-		// ];
+        $student = Student::create($validateData);
 
-		$student = Student::create($request->all());
+        $data = [
+            'message' => 'Student is created successfully',
+            'data' => $student,
+        ];
 
-		$response = [
-			'message' => 'Data Student Berhasil Dibuat',
-			'data' => $student,
-		];
+        // mengembalikan data (json) dan kode 201
+        return response()->json($data, 201);
+    }
 
-		return response()->json($response, 201);
-	}
-
+    // Menampilkan detail student berdasarkan ID
 	public function show($id)
 	{
 		$student = Student::find($id);
 
 		if ($student) {
 			$response = [
-				'message' => 'Get detail student',
+				'message' => 'Mendapatkan detail student',
 				'data' => $student
 			];
 
@@ -66,6 +70,7 @@ class StudentController extends Controller
 		}
 	}
 
+    // Memperbarui data student berdasarkan ID
 	public function update(Request $request, $id)
 	{
 		$student = Student::find($id);
@@ -86,13 +91,14 @@ class StudentController extends Controller
 		}
 	}
 
+    // Menghapus data student berdasarkan ID
 	public function destroy($id)
 	{
 		$student = Student::find($id);
 
 		if ($student) {
 			$response = [
-				'message' => 'Student is delete',
+				'message' => 'Student is deleted',
 				'data' => $student->delete()
 			];
 
